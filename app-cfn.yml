@@ -132,8 +132,8 @@ Resources:
     Properties: 
       ContainerDefinitions: 
         - 
-          Name: "MainContainer"
-          Image: !Ref image-uri
+          Name: "datadog-agent"
+          Image: 'gcr.io/datadoghq/agent:latest'
           Cpu: 256
           PortMappings: 
             - ContainerPort: 80
