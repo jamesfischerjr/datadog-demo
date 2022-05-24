@@ -129,14 +129,21 @@ Resources:
         - FARGATE
   taskdefinition: 
     Type: AWS::ECS::TaskDefinition
-    Properties: 
+    Properties:
+      Family: weatherbackend 
       ContainerDefinitions: 
         - 
-          Name: "datadog-agent"
-          Image: 'gcr.io/datadoghq/agent:latest'
+          Name: "MainContainer"
+          Image: !Ref image-uri
           Cpu: 256
           PortMappings: 
             - ContainerPort: 80
               HostPort: 80
           Memory: 512
           Essential: true
+          LogConfiguration:  
+            LogDriver: awslogs
+            Options: 
+              awslogs-region: us-east-1
+              awslogs-group: weatherbackend
+              awslogs-create-group: true
