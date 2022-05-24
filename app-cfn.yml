@@ -1,7 +1,7 @@
 # This creates a VPC with two public subnets and two private subnets in two Availability Zones, 
 # together with a NAT Gateway and associated routing. Change the Availability Zone locations as needed.
 Parameters:
-  image-uri:
+  imageuri:
     Type: String
 
 Resources:
@@ -190,7 +190,7 @@ Resources:
       ContainerDefinitions: 
         - 
           Name: "MainContainer"
-          Image: !Ref image-uri
+          Image: !Ref imageuri
           Cpu: 256
           PortMappings: 
             - ContainerPort: 80
