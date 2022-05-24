@@ -9,7 +9,7 @@
             "environment": [
                 {
                     "name": "DD_API_KEY",
-                    "value": "6d98f97ce5a5c0c8bcb425acd4e6695f"
+                    "value": "{REDACTED}"
                 },
                 {
                     "name": "ECS_FARGATE",
