@@ -149,6 +149,30 @@ Resources:
                         "logs:PutLogEvents"
                       ]
                 Resource: '*'
+  TaskRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ]
+                Resource: '*'
 
 ## ECS Cluster
   ECSCluster:
@@ -161,6 +185,8 @@ Resources:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: weatherbackend 
+      ExecutionRoleArn: !Ref ExecutionRole
+      TaskRoleArn: !Ref TaskRole
       ContainerDefinitions: 
         - 
           Name: "MainContainer"
