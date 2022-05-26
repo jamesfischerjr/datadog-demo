@@ -205,17 +205,17 @@ Resources:
               awslogs-create-group: true
 
 ## ECS Service
-ECSService:
-  Type: AWS::ECS::Service
-  DependsOn:
-  - Listener
-  Properties:
-    Role:
-      Ref: !Ref ExecutionRole
-    TaskDefinition:
-      Ref: !Ref taskdefinition
-    DesiredCount: 1
-      ContainerPort: 80
-      ContainerName: MainContainer
-    Cluster:
-      Ref: ECSCluster
+  ECSService:
+    Type: AWS::ECS::Service
+    DependsOn:
+    - Listener
+    Properties:
+      Role:
+        Ref: !Ref ExecutionRole
+      TaskDefinition:
+        Ref: !Ref taskdefinition
+      DesiredCount: 1
+        ContainerPort: 80
+        ContainerName: MainContainer
+      Cluster:
+        Ref: ECSCluster
