@@ -215,7 +215,5 @@ Resources:
       TaskDefinition:
         Ref: !Ref taskdefinition
       DesiredCount: 1
-        ContainerPort: 80
-        ContainerName: MainContainer
       Cluster:
         Ref: ECSCluster
