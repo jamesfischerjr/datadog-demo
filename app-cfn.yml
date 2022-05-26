@@ -203,3 +203,19 @@ Resources:
               awslogs-region: us-east-1
               awslogs-group: weatherbackend
               awslogs-create-group: true
+
+## ECS Service
+ECSService:
+  Type: AWS::ECS::Service
+  DependsOn:
+  - Listener
+  Properties:
+    Role:
+      Ref: !Ref ExecutionRole
+    TaskDefinition:
+      Ref: !Ref taskdefinition
+    DesiredCount: 1
+      ContainerPort: 80
+      ContainerName: MainContainer
+    Cluster:
+      Ref: ECSCluster
