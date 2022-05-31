@@ -207,13 +207,80 @@ Resources:
 ## ECS Service
   ECSService:
     Type: AWS::ECS::Service
-    DependsOn:
-    - Listener
     Properties:
-      Role:
-        Ref: !Ref ExecutionRole
-      TaskDefinition:
-        Ref: !Ref taskdefinition
+      TaskDefinition: !Ref taskdefinition
       DesiredCount: 1
-      Cluster:
-        Ref: ECSCluster
+      Cluster: !Ref ECSCluster
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/24
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/25
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2008-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: ecs.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole'
+Outputs:
+  Cluster:
+    Value: !Ref ECSCluster
+
+## AutoScaling
+    "ECSAutoScalingGroup":{
+      "Type":"AWS::AutoScaling::AutoScalingGroup",
+      "DependsOn":[
+        "MyVPC"
+      ],
+      "Properties":{
+        "VPCZoneIdentifier":[
+          {
+            "Ref":"publicSubnet01"
+          },
+          {
+            "Ref":"publicSubnet02"
+          }
+        ],
+        "LaunchConfigurationName":{
+          "Ref":"ContainerInstances"
+        },
+        "MinSize":"1",
+        "MaxSize":{
+          "Ref":"MaxSize"
+        },
+        "DesiredCapacity":{
+          "Ref":"DesiredCapacity"
+        }
+      },
+      "CreationPolicy":{
+        "ResourceSignal":{
+          "Timeout":"PT15M"
+        }
+      },
+      "UpdatePolicy":{
+        "AutoScalingRollingUpdate":{
+          "MinInstancesInService":"1",
+          "MaxBatchSize":"1",
+          "PauseTime":"PT15M",
+          "WaitOnResourceSignals":"true"
+        }
+      }
+    },
