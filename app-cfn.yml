@@ -79,6 +79,23 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
+
+## SecurityGroup
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      VpcId: !Ref PubPrivateVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
   
   ## NAT GATEWAY
   NatGateway:
@@ -131,6 +148,7 @@ Resources:
             Principal:
               Service:
                 - ecs.amazonaws.com
+                - ecs-tasks.amazonaws.com
             Action:
               - 'sts:AssumeRole'
       Path: /
@@ -145,6 +163,7 @@ Resources:
                         "ecr:BatchCheckLayerAvailability",
                         "ecr:GetDownloadUrlForLayer",
                         "ecr:BatchGetImage",
+                        "logs:CreateLogGroup",
                         "logs:CreateLogStream",
                         "logs:PutLogEvents"
                       ]
@@ -159,6 +178,7 @@ Resources:
             Principal:
               Service:
                 - ecs.amazonaws.com
+                - ecs-tasks.amazonaws.com
             Action:
               - 'sts:AssumeRole'
       Path: /
@@ -170,6 +190,7 @@ Resources:
               - Effect: Allow
                 Action: [
                         "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
                         "logs:PutLogEvents"
                       ]
                 Resource: '*'
@@ -184,11 +205,14 @@ Resources:
   taskdefinition: 
     Type: AWS::ECS::TaskDefinition
     Properties:
+      NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
       Family: weatherbackend 
       ExecutionRoleArn: !Ref ExecutionRole
       TaskRoleArn: !Ref TaskRole
+      Cpu: 256
+      Memory: 512
       ContainerDefinitions: 
         - 
           Name: "MainContainer"
@@ -205,6 +229,7 @@ Resources:
               awslogs-region: us-east-1
               awslogs-group: weatherbackend
               awslogs-create-group: true
+              awslogs-stream-prefix: container
 
 ## ECS Service
   ECSService:
@@ -213,6 +238,14 @@ Resources:
       TaskDefinition: !Ref taskdefinition
       DesiredCount: 1
       Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: 
+            - !Ref InstanceSecurityGroup
+          Subnets: 
+            - !Ref PublicSubnet1
   Role:
     Type: AWS::IAM::Role
     Properties:
