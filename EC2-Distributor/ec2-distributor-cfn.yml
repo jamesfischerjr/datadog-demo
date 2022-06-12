@@ -150,7 +150,7 @@ Resources:
     Properties: 
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
-      AvailabilityZone: us-east-1
+      AvailabilityZone: us-east-1a
       KeyName: !Ref KeyName
       SecurityGroupIds: 
         - !Ref InstanceSecurityGroup
@@ -194,11 +194,17 @@ Resources:
             Action:
               - s3:*
             Resource:
-              - arn:aws:s3:::demo-s3-bucket/*
-              - arn:aws:s3:::demo-s3-bucket
+              - arn:aws:s3:::demo-s3-distributor/*
+              - arn:aws:s3:::demo-s3-distributor
       Roles:
         -
           !Ref DemoEc2InstanceRole
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: demo-s3-distributor
 
 Outputs:
   DemoInstanceId:

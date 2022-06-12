@@ -1,0 +1,21 @@
+{
+    "schemaVersion": "2.0",
+    "version": "1.7.1",
+    "publisher": "Amazon Web Services",
+    "packages": {
+        "amazon": {
+            "_any": {
+                "x86_64": {
+                    "file": "helloworld_amz2.zip"
+                }
+            }
+        }
+    },
+    "files": {
+        "helloworld_amz2.zip": {
+            "checksums": {
+                "sha256": "EXAMPLE2b8b9ed71e86f39f5946e837df0d38aacdd38955b4b18ffa6fEXAMPLE"
+            }
+        }
+    }
+}
